@@ -5,6 +5,6 @@
 	"authors": "Ceres et al.",
 	"description": "Alerts Watcher when there's an unvisited echo in their current region.",
 	"requirements": [ "watcher" ],
-	"tags": [ "Game Mechanics", "Accessibility" ],
+	"tags": [ "Accessibility", "Game Mechanics" ],
 	"priorities": [ "moreslugcats" ]
 }

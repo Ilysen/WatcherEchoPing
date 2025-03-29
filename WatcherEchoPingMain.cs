@@ -10,7 +10,7 @@ namespace Ilysen.WatcherEchoPing
 	{
 		public const string PLUGIN_GUID = "ilysen.watcherechoping";
 		public const string PLUGIN_NAME = "Watcher Echo Ping";
-		public const string PLUGIN_VERSION = "1.0.0";
+		public const string PLUGIN_VERSION = "0.1";
 
 		private readonly bool DEBUG = false;
 
@@ -36,11 +36,11 @@ namespace Ilysen.WatcherEchoPing
 			{
 				On.SaveState.LoadGame += ResetValues;
 				On.Player.WatcherUpdate += WatcherUpdateHook;
-				Logger.LogInfo($"Enabled {PLUGIN_GUID} version {PLUGIN_VERSION}");
+				Logger.LogInfo($"Loaded {PLUGIN_NAME} version {PLUGIN_VERSION}.");
 			}
 			catch (Exception e)
 			{
-				Logger.LogInfo($"{PLUGIN_GUID} version {PLUGIN_VERSION} caught an error while initializing!!");
+				Logger.LogInfo($"{PLUGIN_NAME} version {PLUGIN_VERSION} caught an error while initializing!!");
 				Logger.LogError(e);
 			}
 		}
@@ -108,7 +108,7 @@ namespace Ilysen.WatcherEchoPing
 					}
 					else
 					{
-						LogInfo($"No echo is presen in this region.");
+						LogInfo($"No echo is present in this region.");
 					}
 				}
 			}

@@ -89,6 +89,7 @@
     <None Include="LICENSE.md" />
     <None Include="modinfo.json" />
     <None Include="README.md" />
+    <None Include="workshopdata.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="thumbnail.png" />

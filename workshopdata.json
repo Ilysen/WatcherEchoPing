@@ -1,0 +1,18 @@
+{
+    "Title": "Watcher Echo Ping",
+    "Description": "[b]Last tested on game version:[/b] v1.10.1 (The Watcher)\n\nAdds a distinctive visual and sound effect whenever entering or loading a region that has an echo present, like Saint's campaign from Downpour. Compatible with existing saves.\n\nFull description (contains spoilers for the Watcher's progression): [spoiler]Watcher's goal is to find echoes in many different regions, just like Saint, but without any kind of details about whether or not an echo is in any given region -- and it isn't clear which ones do and don't -- there's no easy way of knowing if you should spend time scouring a given reason or if you'd be wasting your time.\n\nSaint's campaign is also based around finding echoes and it has a preexisting effect that effectively prevents this issue entirely. I'm not sure why something like it wasn't included with Watcher's campaign, so I implemented it here.[/spoiler]\n\nPlease let me know if you run into issues! I developed this primarily for myself mid-playthrough to resolve the lack of signposting in Watcher's campaign, so I haven't extensively playtested it with dev tools.\n\nYou can find this mod's source code on [url=https://github.com/Ilysen/WatcherEchoPing]GitHub[/url], under the GPL v3 license.\n\n[h1]Donations[/h1]\nI am not in this for the cash and I am never going to stop maintaining things even if I don't earn from them, but if you feel like giving support, you can use my Ko-fi link: https://ko-fi.com/ceresetal",
+    "ID": "ilysen.watcherechoping",
+    "Version": "0.1",
+    "TargetGameVersion": "v1.10.1",
+    "Requirements": "watcher",
+    "RequirementNames": "The Watcher",
+    "Authors": "Ceres et al.",
+    "Visibility": "Unlisted",
+    "Tags": [
+        "Accessibility",
+        "Game Mechanics"
+    ],
+    "WorkshopID": 3454341892,
+    "UploadFilesOnly": true,
+    "UploadThumbnail": false
+}
