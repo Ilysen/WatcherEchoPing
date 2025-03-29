@@ -1,0 +1,10 @@
+{
+	"id": "ilysen.watcherechoping",
+	"name": "Watcher Echo Ping",
+	"version": "0.1",
+	"authors": "Ceres et al.",
+	"description": "Alerts Watcher when there's an unvisited echo in their current region.",
+	"requirements": [ "watcher" ],
+	"tags": [ "Game Mechanics", "Accessibility" ],
+	"priorities": [ "moreslugcats" ]
+}
