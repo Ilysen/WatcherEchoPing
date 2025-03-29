@@ -30,7 +30,7 @@ namespace Ilysen.WatcherEchoPing
 		/// </summary>
 		public static float shelterTimer = 0f;
 
-		public void OnEnable()
+		private void OnEnable()
 		{
 			try
 			{
@@ -45,7 +45,7 @@ namespace Ilysen.WatcherEchoPing
 			}
 		}
 
-		public void OnDisable()
+		private void OnDisable()
 		{
 			On.SaveState.LoadGame -= ResetValues;
 			On.Player.WatcherUpdate -= WatcherUpdateHook;
