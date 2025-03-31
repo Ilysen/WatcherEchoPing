@@ -1,7 +1,7 @@
 {
 	"id": "ilysen.watcherechoping",
 	"name": "Watcher Echo Ping",
-	"version": "0.1",
+	"version": "0.1.1",
 	"authors": "Ceres et al.",
 	"description": "Alerts Watcher when there's an unvisited echo in their current region.",
 	"requirements": [ "watcher" ],

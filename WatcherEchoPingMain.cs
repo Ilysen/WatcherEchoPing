@@ -10,9 +10,15 @@ namespace Ilysen.WatcherEchoPing
 	{
 		public const string PLUGIN_GUID = "ilysen.watcherechoping";
 		public const string PLUGIN_NAME = "Watcher Echo Ping";
-		public const string PLUGIN_VERSION = "0.1";
+		public const string PLUGIN_VERSION = "0.1.1";
 
 		private readonly bool DEBUG = false;
+
+		/// <summary>
+		/// If true, pings won't be checked at all.
+		/// This is used after seeing the void bath ending in order to save on compute time and make sure that pings don't erroneously appear anymore.
+		/// </summary>
+		public static bool disablePings = false;
 
 		/// <summary>
 		/// The string ID of the last region that was pinged.
@@ -57,6 +63,8 @@ namespace Ilysen.WatcherEchoPing
 		/// </summary>
 		private void ResetValues(On.SaveState.orig_LoadGame orig, SaveState self, string str, RainWorldGame game)
 		{
+			LogInfo("Resetting internal values.");
+			disablePings = false;
 			lastPingRegion = null;
 			queuedPing = false;
 			shelterTimer = 0f;
@@ -68,47 +76,58 @@ namespace Ilysen.WatcherEchoPing
 		/// </summary>
 		private void WatcherUpdateHook(On.Player.orig_WatcherUpdate orig, Player self)
 		{
-			if (queuedPing)
+			if (!disablePings)
 			{
-				if (self.room != null && !Watcher.WarpPoint.WarpInProgress)
+				if (queuedPing)
 				{
-					shelterTimer = self.room.shelterDoor == null ? 1f : shelterTimer + UnityEngine.Time.deltaTime;
-					if (shelterTimer >= 1f)
+					if (self.room != null && !Watcher.WarpPoint.WarpInProgress)
 					{
-						self.room.AddObject(new GhostPing(self.room));
-						shelterTimer = 0f;
-						queuedPing = false;
-						LogInfo("Ping created.");
+						shelterTimer = self.room.shelterDoor == null ? 1f : shelterTimer + UnityEngine.Time.deltaTime;
+						if (shelterTimer >= 1f)
+						{
+							self.room.AddObject(new GhostPing(self.room));
+							shelterTimer = 0f;
+							queuedPing = false;
+							LogInfo("Ping created.");
+						}
 					}
 				}
-			}
-			else
-			{
-				string regionName = self.room?.world?.region?.name;
-				if (lastPingRegion != regionName &&
-					!regionName.IsNullOrWhiteSpace() &&
-					self.SlugCatClass == Watcher.WatcherEnums.SlugcatStatsName.Watcher &&
-					self.abstractCreature.world.game.IsStorySession)
+				else
 				{
-					LogInfo($"Searching region: {regionName} (last ping: {(lastPingRegion.IsNullOrWhiteSpace() ? "null" : lastPingRegion)})");
-					lastPingRegion = regionName;
-					var ghostPresence = self.room.world.spinningTopPresences.FirstOrDefault(x => x.ghostRoom.world.region.name == regionName);
-					if (ghostPresence != default)
+					if (self.abstractCreature.world.game.GetStorySession.saveState.deathPersistentSaveData.sawVoidBathSlideshow)
 					{
-						LogInfo("Positive match!");
-						LogInfo($"Room ID: {ghostPresence.ghostRoom.name}");
-						LogInfo($"Room region: {ghostPresence.ghostRoom.world.region.name}");
-						if (!self.room.game.GetStorySession.saveState.deathPersistentSaveData.spinningTopEncounters.Contains(ghostPresence.spinningTopSpawnId))
-						{
-							queuedPing = true;
-							LogInfo("Prepping a ping.");
-						}
-						else
-							LogInfo("...but we've already encountered it, so we aren't pinging it.");
+						LogInfo("This save file has seen the void bath ending! Pings have been disabled until next game load.");
+						disablePings = true;
 					}
 					else
 					{
-						LogInfo($"No echo is present in this region.");
+						string regionName = self.room?.world?.region?.name;
+						if (lastPingRegion != regionName &&
+							!regionName.IsNullOrWhiteSpace() &&
+							self.SlugCatClass == Watcher.WatcherEnums.SlugcatStatsName.Watcher &&
+							self.abstractCreature.world.game.IsStorySession)
+						{
+							LogInfo($"Searching region: {regionName} (last ping: {(lastPingRegion.IsNullOrWhiteSpace() ? "null" : lastPingRegion)})");
+							lastPingRegion = regionName;
+							var ghostPresence = self.room.world.spinningTopPresences.FirstOrDefault(x => x.ghostRoom.world.region.name == regionName);
+							if (ghostPresence != default)
+							{
+								LogInfo("Positive match!");
+								LogInfo($"Room ID: {ghostPresence.ghostRoom.name}");
+								LogInfo($"Room region: {ghostPresence.ghostRoom.world.region.name}");
+								if (!self.room.game.GetStorySession.saveState.deathPersistentSaveData.spinningTopEncounters.Contains(ghostPresence.spinningTopSpawnId))
+								{
+									queuedPing = true;
+									LogInfo("Prepping a ping.");
+								}
+								else
+									LogInfo("...but we've already encountered it, so we aren't pinging it.");
+							}
+							else
+							{
+								LogInfo($"No echo is present in this region.");
+							}
+						}
 					}
 				}
 			}

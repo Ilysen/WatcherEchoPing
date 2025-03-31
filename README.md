@@ -6,6 +6,10 @@ This mod is licensed under the [GNU General Public License v3](http://www.gnu.or
 
 ## Changelog
 
+### 31 March, 2025
+#### Version 0.1.1
+* Fixed an issue where pings still appeared even after completing a specific ending.
+
 ### 29 March, 2025
 #### Version 0.1
 * Initial release.
