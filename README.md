@@ -6,6 +6,10 @@ This mod is licensed under the [GNU General Public License v3](http://www.gnu.or
 
 ## Changelog
 
+### 2 April, 2025
+#### Version 0.1.2
+* Fixed an issue causing arenas to get stuck on a black screen.
+
 ### 31 March, 2025
 #### Version 0.1.1
 * Fixed an issue where pings still appeared even after completing a specific ending.

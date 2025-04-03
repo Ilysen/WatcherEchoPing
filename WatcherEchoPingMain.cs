@@ -10,7 +10,7 @@ namespace Ilysen.WatcherEchoPing
 	{
 		public const string PLUGIN_GUID = "ilysen.watcherechoping";
 		public const string PLUGIN_NAME = "Watcher Echo Ping";
-		public const string PLUGIN_VERSION = "0.1.1";
+		public const string PLUGIN_VERSION = "0.1.2";
 
 		private readonly bool DEBUG = false;
 
@@ -76,62 +76,76 @@ namespace Ilysen.WatcherEchoPing
 		/// </summary>
 		private void WatcherUpdateHook(On.Player.orig_WatcherUpdate orig, Player self)
 		{
-			if (!disablePings)
+			try
 			{
-				if (queuedPing)
+				if (!disablePings)
 				{
-					if (self.room != null && !Watcher.WarpPoint.WarpInProgress)
+					if (queuedPing)
 					{
-						shelterTimer = self.room.shelterDoor == null ? 1f : shelterTimer + UnityEngine.Time.deltaTime;
-						if (shelterTimer >= 1f)
+						if (self.room != null && !Watcher.WarpPoint.WarpInProgress)
 						{
-							self.room.AddObject(new GhostPing(self.room));
-							shelterTimer = 0f;
-							queuedPing = false;
-							LogInfo("Ping created.");
+							shelterTimer = self.room.shelterDoor == null ? 1f : shelterTimer + UnityEngine.Time.deltaTime;
+							if (shelterTimer >= 1f)
+							{
+								self.room.AddObject(new GhostPing(self.room));
+								shelterTimer = 0f;
+								queuedPing = false;
+								LogInfo("Ping created.");
+							}
 						}
-					}
-				}
-				else
-				{
-					if (self.abstractCreature.world.game.GetStorySession.saveState.deathPersistentSaveData.sawVoidBathSlideshow)
-					{
-						LogInfo("This save file has seen the void bath ending! Pings have been disabled until next game load.");
-						disablePings = true;
 					}
 					else
 					{
-						string regionName = self.room?.world?.region?.name;
-						if (lastPingRegion != regionName &&
-							!regionName.IsNullOrWhiteSpace() &&
-							self.SlugCatClass == Watcher.WatcherEnums.SlugcatStatsName.Watcher &&
-							self.abstractCreature.world.game.IsStorySession)
+						if (!self.abstractCreature.world.game.IsStorySession)
 						{
-							LogInfo($"Searching region: {regionName} (last ping: {(lastPingRegion.IsNullOrWhiteSpace() ? "null" : lastPingRegion)})");
-							lastPingRegion = regionName;
-							var ghostPresence = self.room.world.spinningTopPresences.FirstOrDefault(x => x.ghostRoom.world.region.name == regionName);
-							if (ghostPresence != default)
+							LogInfo("This isn't a story session! Pings have been disabled until next game load.");
+							disablePings = true;
+						}
+						else if (self.SlugCatClass != Watcher.WatcherEnums.SlugcatStatsName.Watcher)
+						{
+							LogInfo("This save file isn't Watcher! Pings have been disabled until next game load.");
+							disablePings = true;
+						}
+						else if (self.abstractCreature.world.game.GetStorySession.saveState.deathPersistentSaveData.sawVoidBathSlideshow)
+						{
+							LogInfo("This save file has seen the void bath ending! Pings have been disabled until next game load.");
+							disablePings = true;
+						}
+						else
+						{
+							string regionName = self.room?.world?.region?.name;
+							if (lastPingRegion != regionName && !regionName.IsNullOrWhiteSpace())
 							{
-								LogInfo("Positive match!");
-								LogInfo($"Room ID: {ghostPresence.ghostRoom.name}");
-								LogInfo($"Room region: {ghostPresence.ghostRoom.world.region.name}");
-								if (!self.room.game.GetStorySession.saveState.deathPersistentSaveData.spinningTopEncounters.Contains(ghostPresence.spinningTopSpawnId))
+								LogInfo($"Searching region: {regionName} (last ping: {(lastPingRegion.IsNullOrWhiteSpace() ? "null" : lastPingRegion)})");
+								lastPingRegion = regionName;
+								var ghostPresence = self.room.world.spinningTopPresences.FirstOrDefault(x => x.ghostRoom.world.region.name == regionName);
+								if (ghostPresence != default)
 								{
-									queuedPing = true;
-									LogInfo("Prepping a ping.");
+									LogInfo("Positive match!");
+									LogInfo($"Room ID: {ghostPresence.ghostRoom.name}");
+									LogInfo($"Room region: {ghostPresence.ghostRoom.world.region.name}");
+									if (!self.room.game.GetStorySession.saveState.deathPersistentSaveData.spinningTopEncounters.Contains(ghostPresence.spinningTopSpawnId))
+									{
+										queuedPing = true;
+										LogInfo("Prepping a ping.");
+									}
+									else
+										LogInfo("...but we've already encountered it, so we aren't pinging it.");
 								}
 								else
-									LogInfo("...but we've already encountered it, so we aren't pinging it.");
-							}
-							else
-							{
-								LogInfo($"No echo is present in this region.");
+								{
+									LogInfo($"No echo is present in this region.");
+								}
 							}
 						}
 					}
 				}
+				orig(self);
 			}
-			orig(self);
+			catch (Exception e)
+			{
+				Logger.LogError(e);
+			}
 		}
 
 		private void LogInfo(string content)
